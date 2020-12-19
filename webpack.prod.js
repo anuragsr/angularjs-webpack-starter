@@ -38,7 +38,6 @@ module.exports = {
       },
       {
         test: /\.(scss|sass)$/,
-        // test: /\.(scss|css|sass)$/, // Moved css above
         use: [
           {
             loader: MiniCssExtractPlugin.loader
@@ -110,7 +109,6 @@ module.exports = {
     new CleanWebpackPlugin(buildPath),
     new CopyWebpackPlugin({
       patterns: [
-        // { from: './src/assets', to: 'assets' },
         {from: __dirname + '/public'}
       ]
     }),

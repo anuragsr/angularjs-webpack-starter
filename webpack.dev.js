@@ -84,7 +84,6 @@ module.exports = {
     new ExtractTextPlugin("styles.css"),
     new CopyWebpackPlugin({
       patterns: [
-        // { from: './src/assets', to: 'assets' },
         {from: __dirname + '/public'}
       ]
     })
