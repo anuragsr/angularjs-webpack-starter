@@ -9,6 +9,7 @@ module.exports = {
   devServer: {
     disableHostCheck: true,
     port: 8080,
+    open: true,
     contentBase: path.join(__dirname, "dist"),
     publicPath: '/'
   },
@@ -22,16 +23,20 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader',
         options: {
-          presets: ['env']
+          presets: ['@babel/preset-env'],
+          plugins: ['@babel/plugin-proposal-object-rest-spread']
         }
+      },
+      {
+        test: /\.(css)$/,
+        use: ExtractTextPlugin.extract({
+          use: [ 'css-loader' ]
+        })
       },
       {
         test: /\.(scss)$/,
         use: ExtractTextPlugin.extract({
-          use: [
-            'css-loader',
-            'sass-loader'
-          ]
+          use: [ 'css-loader', 'sass-loader' ]
         })
         // No postcss for dev
       }
