@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   devtool: 'eval-cheap-module-source-map',
@@ -10,12 +10,10 @@ module.exports = {
     disableHostCheck: true,
     port: 8080,
     open: true,
-    contentBase: path.join(__dirname, "dist"),
+    contentBase: path.join(__dirname, "build"),
     publicPath: '/'
   },
-  node: {
-    fs: 'empty'
-  },
+  node: { fs: 'empty' },
   module: {
     rules: [
       {
@@ -29,43 +27,34 @@ module.exports = {
       },
       {
         test: /\.(css)$/,
-        use: ExtractTextPlugin.extract({
-          use: [ 'css-loader' ]
-        })
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.(scss)$/,
-        use: ExtractTextPlugin.extract({
-          use: [ 'css-loader', 'sass-loader' ]
-        })
-        // No postcss for dev
-      }
-      ,
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { url: false } },
+          'sass-loader'
+        ],
+      },
       {
         // Load all images as base64 encoding if they are smaller than 8192 bytes
         test: /\.(png|jpg|gif)$/,
         use: [
           {
+            // On development we want to see where the file is coming from, hence we preserve the [path]
             loader: 'url-loader',
-            options: {
-              // On development we want to see where the file is coming from, hence we preserve the [path]
-              name: '[path][name].[ext]?hash=[hash:20]',
-              limit: 8192
-            }
+            options: { name: '[path][name].[ext]?hash=[hash:20]', limit: 8192 }
           }
         ]
-      }
-      ,
+      },
       {
         // Load all icons
         test: /\.(eot|woff|woff2|svg|ttf|otf)([\?]?.*)$/,
         use: [
-          {
-            loader: 'file-loader',
-          }
+          { loader: 'file-loader' }
         ]
-      }
-      ,
+      },
       {
         // HTML LOADER
         // Reference: https://github.com/webpack/raw-loader
@@ -81,7 +70,7 @@ module.exports = {
       // Inject the js bundle at the end of the body of the given template
       inject: 'body',
     }),
-    new ExtractTextPlugin("styles.css"),
+    new MiniCssExtractPlugin({ filename: "style.css" }),
     new CopyWebpackPlugin({
       patterns: [
         {from: __dirname + '/public'}

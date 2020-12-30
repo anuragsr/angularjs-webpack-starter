@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin'); //installed via npm
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
 const buildPath = path.resolve(__dirname, 'dist');
 
@@ -32,38 +32,28 @@ module.exports = {
       },
       {
         test: /\.(css)$/,
-        use: ExtractTextPlugin.extract({
-          use: [ 'css-loader' ]
-        })
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.(scss|sass)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             // translates CSS into CommonJS
             loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
+            options: { url: false, sourceMap: false }
           },
           {
             // Runs compiled CSS through postcss for vendor prefixing
             loader: 'postcss-loader',
-            options: {
-                sourceMap: true
-            }
+            options: { sourceMap: false }
           },
           {
             // compiles Sass to CSS
             loader: 'sass-loader',
-            options: {
-              outputStyle: 'expanded',
-              sourceMap: true,
-              sourceMapContents: true
-            }
+            options: { sourceMap: false }
           }
         ]
       },
@@ -73,24 +63,17 @@ module.exports = {
         use: [
           {
             loader: 'url-loader',
-            options: {
-              name: '[name].[hash:20].[ext]',
-              limit: 8192
-            }
+            options: { name: '[name].[hash:20].[ext]', limit: 8192 }
           }
         ]
-      }
-      ,
+      },
       {
         // Load all icons
         test: /\.(eot|woff|woff2|svg|ttf|otf)([\?]?.*)$/,
         use: [
-          {
-            loader: 'file-loader',
-          }
+          { loader: 'file-loader' }
         ]
-      }
-      ,
+      },
       {
         // HTML LOADER
         // Reference: https://github.com/webpack/raw-loader
@@ -106,24 +89,17 @@ module.exports = {
       // Inject the js bundle at the end of the body of the given template
       inject: 'body',
     }),
+    new BaseHrefWebpackPlugin({ baseHref: '/' }),
     new CleanWebpackPlugin(buildPath),
     new CopyWebpackPlugin({
-      patterns: [
-        {from: __dirname + '/public'}
-      ]
+      patterns: [{from: __dirname + '/public'}]
     }),
-    new MiniCssExtractPlugin({
-      filename: 'styles.[contenthash].css'
-    }),
+    new MiniCssExtractPlugin({ filename: 'styles.[contenthash].css' }),
     new OptimizeCssAssetsPlugin({
       cssProcessor: require('cssnano'),
       cssProcessorOptions: {
-        map: {
-          inline: false,
-        },
-        discardComments: {
-          removeAll: true
-        },
+        map: { inline: false },
+        discardComments: { removeAll: true },
         discardUnused: false
       },
       canPrint: true
