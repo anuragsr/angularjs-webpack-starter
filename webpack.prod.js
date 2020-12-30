@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
-const buildPath = path.resolve(__dirname, 'dist');
+const buildPath = path.resolve(__dirname, 'build');
 
 module.exports = {
   devtool: 'source-map',
