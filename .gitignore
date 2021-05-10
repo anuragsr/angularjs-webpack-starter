@@ -1,4 +1,4 @@
-.idea
 /node_modules
-dist
-extra
+/build
+/extra
+vs.code-workspace
